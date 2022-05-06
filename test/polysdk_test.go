@@ -11,7 +11,7 @@ const AppId = "2dpjq"
 const ProviderAttrDef = "ProviderAttrDef"
 
 func getAuth() polysdk.Auth {
-	return polysdk.NewAuth("jaromejiang@yunify.com", "Jiang123.")
+	return polysdk.NewAuth("username", "password")
 }
 func getModelClient(appId string, modelCode string) polysdk.DataModelClient {
 	auth := getAuth()
