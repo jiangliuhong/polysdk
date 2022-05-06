@@ -3,7 +3,7 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jiangliuhong/polysdk/polysdk"
+	"github.com/jiangliuhong/polysdk"
 	"testing"
 )
 
