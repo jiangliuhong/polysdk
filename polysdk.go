@@ -31,13 +31,16 @@ type Auth struct {
 	Username  string
 	Password  string
 	LoginType LoginType
+	Token     string
+	Expiry    *time.Time
 }
 
 // TokenResponseBody token返回结果
 type TokenResponseBody struct {
 	Code int `json:"code"`
 	Data struct {
-		AccessToken string `json:"access_token"`
+		AccessToken string     `json:"access_token"`
+		Expiry      *time.Time `json:"expiry"`
 	} `json:"data"`
 	Msg string `json:"msg"`
 }
@@ -49,7 +52,21 @@ func bodyClose(Body io.ReadCloser) {
 	}
 }
 
-func (auth Auth) GetToken() (*string, error) {
+// IsExpiry 判断token是否过期
+// true：过期
+func (auth *Auth) IsExpiry() bool {
+	if auth.Expiry == nil {
+		return true
+	}
+	subDuration := auth.Expiry.Sub(time.Now())
+	subSecond := subDuration * time.Second
+	return subSecond < 600
+}
+
+func (auth *Auth) GetToken() (*string, error) {
+	if !auth.IsExpiry() {
+		return &auth.Token, nil
+	}
 	tokenReq := map[string]string{
 		"username":   auth.Username,
 		"password":   auth.Password,
@@ -70,7 +87,10 @@ func (auth Auth) GetToken() (*string, error) {
 	if responseBody.Code != 0 {
 		return nil, errors.New(responseBody.Msg)
 	}
-	return &responseBody.Data.AccessToken, nil
+	auth.Token = responseBody.Data.AccessToken
+	auth.Expiry = responseBody.Data.Expiry
+	auth.IsExpiry()
+	return &auth.Token, nil
 }
 
 // NewAuth 生成一个认证对象

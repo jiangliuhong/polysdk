@@ -18,8 +18,14 @@ func getModelClient(appId string, modelCode string) polysdk.DataModelClient {
 	return polysdk.NewQxDataModelClient(auth, appId, modelCode)
 }
 func Test1GetToken(t *testing.T) {
+	//timeStr1 := "2022-05-07T08:10:24.307260092Z"
 	auth := getAuth()
 	token, err := auth.GetToken()
+	if err != nil {
+		panic(err)
+	}
+	println("token:\n" + *token)
+	token, err = auth.GetToken()
 	if err != nil {
 		panic(err)
 	}
