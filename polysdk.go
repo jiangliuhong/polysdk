@@ -219,6 +219,12 @@ func (client QxDataModelClient) Create(data map[string]interface{}) (bool, map[s
 
 func (client QxDataModelClient) Search(searchParam DataModelSearchParam) ([]map[string]interface{}, int, error) {
 	apiPath := client.buildApiPath("search")
+	if searchParam.Page == 0 {
+		searchParam.Page = 1
+	}
+	if searchParam.Size == 0 {
+		searchParam.Size = 20
+	}
 	requestBody, err := json.Marshal(searchParam)
 	if err != nil {
 		return nil, 0, err

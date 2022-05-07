@@ -68,8 +68,9 @@ func Test3GetModel(t *testing.T) {
 func TestSearchModel(t *testing.T) {
 	client := getModelClient(AppId, ProviderAttrDef)
 	param := polysdk.DataModelSearchParam{
-		Page: 1,
-		Size: 20,
+		Query: map[string]interface{}{},
+		Page:  1,
+		Size:  20,
 	}
 	list, total, err := client.Search(param)
 	if err != nil {
