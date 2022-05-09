@@ -110,6 +110,8 @@ type DataModelSearchParam struct {
 type DataModelClient interface {
 	// Create 创建一条数据
 	Create(data map[string]interface{}) (bool, map[string]interface{}, error)
+	// BatchCreate 批量创建数据
+	BatchCreate(dataList []map[string]interface{}) ([]map[string]interface{}, error)
 	// Get 查询一条数据
 	Get(id string) (map[string]interface{}, error)
 	// Search 查询多条
@@ -235,6 +237,18 @@ func (client QxDataModelClient) Create(data map[string]interface{}) (bool, map[s
 		return false, nil, errors.New(createBody.Msg)
 	}
 	return true, createBody.Data.Entity, nil
+}
+
+func (client QxDataModelClient) BatchCreate(dataList []map[string]interface{}) ([]map[string]interface{}, error) {
+	var list []map[string]interface{}
+	for _, data := range dataList {
+		_, entity, err := client.Create(data)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, entity)
+	}
+	return list, nil
 }
 
 func (client QxDataModelClient) Search(searchParam DataModelSearchParam) ([]map[string]interface{}, int, error) {
